@@ -3,21 +3,22 @@ using Messenger.Database.Context.Factory;
 using Messenger.Domain.Dtos.User;
 using Messenger.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Messenger.Models;
+using Messenger.Models.Account;
 
 namespace Messenger.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class AuthContoller : ControllerBase
+[Route("Account")]
+public class AccountController : Controller
 {
 	private readonly IApplicationContextFactory _applicationContextFactory;
-	public AuthContoller(IApplicationContextFactory applicationContextFactory)
+	public AccountController(IApplicationContextFactory applicationContextFactory)
 	{
 		_applicationContextFactory = applicationContextFactory;
 	}
 
-	[HttpPost("register")]
+	[HttpPost]
+	[Consumes("application/json")]
     public async Task<IActionResult> Registation(RegisterModel model)
 	{
 		await using var context = _applicationContextFactory.Create();
@@ -49,9 +50,26 @@ public class AuthContoller : ControllerBase
 
 		return Ok(userRegisterDto);
     }
-	//public IActionResult Index()
-	//{
-	//	return View();
-	//}
+	public async Task<IActionResult> Login(LoginModel model)
+	{
+		await using var context = _applicationContextFactory.Create();
+
+		if (!ModelState.IsValid)
+			return BadRequest(ModelState);
+
+		var user = await context.Users.FirstOrDefaultAsync(x => x.Login == model.Login);
+
+		if (user == null || user.Password != model.Password)
+			return BadRequest("Неверный логин или пароль");
+
+		var userLoginDto = new LoginDto()
+		{
+			Id = user.Id,
+			Login = user.Login,
+			Password = user.Password
+		};
+
+		return Ok(userLoginDto);
+	}
 }
 
