@@ -1,9 +1,21 @@
-﻿namespace Messenger.Models;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace Messenger.Models;
 public class RegisterModel
 {
 	public Guid Id { get; set; }
-	public string Login { get; set; }
-	public string Password { get; set; }
+
+	[Required(ErrorMessage = "Логин обязателен.")]
+    public string Login { get; set; }
+
+	[Required(ErrorMessage = "Пароль обязателен.")]
+    public string Password { get; set; }
 	public string Name { get; set; }
+
+	[DisplayName("Подтверждение пароля")]
+    [Required(ErrorMessage = "Подтверждение обязательно.")]
+    [Compare("Password", ErrorMessage = "Пароли не совпадают.")]
+    public string ConfirmPassword { get; set; }
 }
 

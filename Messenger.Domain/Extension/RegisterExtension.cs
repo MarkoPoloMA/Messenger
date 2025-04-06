@@ -1,5 +1,4 @@
-﻿using Messenger.Domain.Dtos;
-using Messenger.Domain.Dtos.User;
+﻿using Messenger.Domain.Dtos.User;
 using Messenger.Domain.Entities;
 
 namespace Messenger.Domain.Extension;
